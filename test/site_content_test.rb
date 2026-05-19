@@ -10,7 +10,7 @@ class SiteContentTest < Minitest::Test
     config = yaml_load((ROOT / "_config.yml").read)
 
     %w[name description avatar].each do |key|
-      assert config[key].to_s.strip != "", "Expected _config.yml to define #{key}"
+      refute_empty config[key].to_s.strip, "Expected _config.yml to define #{key}"
     end
 
     avatar = config["avatar"].to_s.strip
@@ -34,20 +34,20 @@ class SiteContentTest < Minitest::Test
     root_page_files.each do |page_path|
       front_matter = read_front_matter(page_path)
       next if front_matter.empty?
-      assert front_matter["layout"].to_s.strip != "", "Missing layout in #{page_path}"
+      refute_empty front_matter["layout"].to_s.strip, "Missing layout in #{page_path}"
       assert layout_exists?(front_matter["layout"]), "Unknown layout #{front_matter['layout']} in #{page_path}"
 
       next if page_path.basename.to_s == "index.html"
 
-      assert front_matter["title"].to_s.strip != "", "Missing title in #{page_path}"
+      refute_empty front_matter["title"].to_s.strip, "Missing title in #{page_path}"
     end
   end
 
   def test_posts_have_required_front_matter
     post_files.each do |post_path|
       front_matter = read_front_matter(post_path)
-      assert front_matter["layout"].to_s.strip != "", "Missing layout in #{post_path}"
-      assert front_matter["title"].to_s.strip != "", "Missing title in #{post_path}"
+      refute_empty front_matter["layout"].to_s.strip, "Missing layout in #{post_path}"
+      refute_empty front_matter["title"].to_s.strip, "Missing title in #{post_path}"
       assert layout_exists?(front_matter["layout"]), "Unknown layout #{front_matter['layout']} in #{post_path}"
     end
   end
@@ -57,7 +57,7 @@ class SiteContentTest < Minitest::Test
     layout_files.each do |layout_path|
       front_matter = read_front_matter(layout_path)
       parent_layout = front_matter["layout"]
-      next if parent_layout.to_s.strip == ""
+      next if parent_layout.to_s.strip.empty?
 
       assert layout_names.include?(parent_layout), "Unknown parent layout #{parent_layout} in #{layout_path}"
     end
@@ -116,7 +116,7 @@ class SiteContentTest < Minitest::Test
   end
 
   def normalize_image_path(path)
-    return nil if path.nil? || path.strip == ""
+    return nil if path.nil? || path.strip.empty?
     return nil if path.match?(/\Ahttps?:\/\//)
 
     normalized = path.gsub(/\{\{\s*site\.baseurl\s*\}\}/, "").strip
@@ -128,7 +128,7 @@ class SiteContentTest < Minitest::Test
   end
 
   def layout_exists?(layout_name)
-    return false if layout_name.to_s.strip == ""
+    return false if layout_name.to_s.strip.empty?
 
     (ROOT / "_layouts" / "#{layout_name}.html").exist?
   end
