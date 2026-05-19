@@ -110,7 +110,7 @@ class SiteContentTest < Minitest::Test
 
   def extract_image_paths(content)
     paths = []
-    content.scan(/!\[[^\]]*\]\(([^)]+)\)/) { |match| paths << match.first }
+    content.scan(/!\[[^\]]*\]\((\S+)(?:\s+["'][^"']*["'])?\)/) { |match| paths << match.first }
     content.scan(/<img[^>]+src=["']([^"']+)["']/i) { |match| paths << match.first }
     paths
   end
@@ -120,7 +120,6 @@ class SiteContentTest < Minitest::Test
     return nil if path.match?(/\Ahttps?:\/\//)
 
     normalized = path.gsub(/\{\{\s*site\.baseurl\s*\}\}/, "").strip
-    normalized = normalized.split(/\s+/).first.to_s
     normalized = normalized.sub(/\A\.\//, "").sub(/\A\//, "")
     return nil unless normalized.start_with?("images/")
 
@@ -134,6 +133,6 @@ class SiteContentTest < Minitest::Test
   end
 
   def yaml_load(content)
-    YAML.safe_load(content, permitted_classes: [Date, Symbol], aliases: true) || {}
+    YAML.safe_load(content, permitted_classes: [Date, Symbol]) || {}
   end
 end
