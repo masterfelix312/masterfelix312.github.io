@@ -8,3 +8,10 @@ Gemfile
 Gemfile.lock
 node_modules
 package.json
+
+# Insurance Refund Bot
+insurance-refund-bot/.env
+insurance-refund-bot/screenshots/
+insurance-refund-bot/.venv/
+insurance-refund-bot/__pycache__/
+*.pyc
